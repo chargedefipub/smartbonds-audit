@@ -1,0 +1,537 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "contract ITreasury",
+				"name": "_treasury",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IPancakeRouter02",
+				"name": "_router",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_rewardPerEpoch",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_startEpoch",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_bonusEndEpoch",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address[]",
+				"name": "_dollarToRewardPath",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "tokenRecovered",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "AdminTokenRecovery",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "epoch",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "dollarAmount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "shareAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "DollarSwapped",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "rewardPerEpoch",
+				"type": "uint256"
+			}
+		],
+		"name": "NewRewardPerEpoch",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "startEpoch",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "endEpoch",
+				"type": "uint256"
+			}
+		],
+		"name": "NewStartAndEndEpochs",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "oldTreasury",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newTreasury",
+				"type": "address"
+			}
+		],
+		"name": "NewTreasury",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "blockNumber",
+				"type": "uint256"
+			}
+		],
+		"name": "RewardsStop",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "role",
+				"type": "bytes32"
+			},
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "previousAdminRole",
+				"type": "bytes32"
+			},
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "newAdminRole",
+				"type": "bytes32"
+			}
+		],
+		"name": "RoleAdminChanged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "role",
+				"type": "bytes32"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "RoleGranted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "role",
+				"type": "bytes32"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "RoleRevoked",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "DEFAULT_ADMIN_ROLE",
+		"outputs": [
+			{ "internalType": "bytes32", "name": "", "type": "bytes32" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "PRECISION_FACTOR",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "bonusEndEpoch",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_dollarAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "canSwap",
+		"outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"name": "dollarToRewardPath",
+		"outputs": [
+			{ "internalType": "address", "name": "", "type": "address" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "bytes32", "name": "role", "type": "bytes32" }
+		],
+		"name": "getRoleAdmin",
+		"outputs": [
+			{ "internalType": "bytes32", "name": "", "type": "bytes32" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "bytes32", "name": "role", "type": "bytes32" },
+			{ "internalType": "uint256", "name": "index", "type": "uint256" }
+		],
+		"name": "getRoleMember",
+		"outputs": [
+			{ "internalType": "address", "name": "", "type": "address" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "bytes32", "name": "role", "type": "bytes32" }
+		],
+		"name": "getRoleMemberCount",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "bytes32", "name": "role", "type": "bytes32" },
+			{ "internalType": "address", "name": "account", "type": "address" }
+		],
+		"name": "grantRole",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "bytes32", "name": "role", "type": "bytes32" },
+			{ "internalType": "address", "name": "account", "type": "address" }
+		],
+		"name": "hasRole",
+		"outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "lastRewardEpoch",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "pendingReward",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_tokenAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tokenAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "recoverWrongTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "bytes32", "name": "role", "type": "bytes32" },
+			{ "internalType": "address", "name": "account", "type": "address" }
+		],
+		"name": "renounceRole",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "bytes32", "name": "role", "type": "bytes32" },
+			{ "internalType": "address", "name": "account", "type": "address" }
+		],
+		"name": "revokeRole",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_dollarAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "rewardExpected",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "rewardPerEpoch",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "rewardToken",
+		"outputs": [
+			{
+				"internalType": "contract IERC20Metadata",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "router",
+		"outputs": [
+			{
+				"internalType": "contract IPancakeRouter02",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract ITreasury",
+				"name": "_treasury",
+				"type": "address"
+			}
+		],
+		"name": "setTreasury",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "startEpoch",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "stopReward",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes4",
+				"name": "interfaceId",
+				"type": "bytes4"
+			}
+		],
+		"name": "supportsInterface",
+		"outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_dollarAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "swap",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "treasury",
+		"outputs": [
+			{
+				"internalType": "contract ITreasury",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_rewardPerEpoch",
+				"type": "uint256"
+			}
+		],
+		"name": "updateRewardPerEpoch",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_startEpoch",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_bonusEndEpoch",
+				"type": "uint256"
+			}
+		],
+		"name": "updateStartAndEndBlocks",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]

@@ -1,0 +1,261 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "contract IERC20",
+				"name": "depositToken_",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IERC20",
+				"name": "earnedToken_",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "devWallet_",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "startBlock_",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "endBlock_",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "exchangeRate_",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxToSell_",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "CollectReward",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "Deposit",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "devAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "DevWithdraw",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "amountDeposited",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "uint256", "name": "amount", "type": "uint256" }
+		],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "depositToken",
+		"outputs": [
+			{ "internalType": "contract IERC20", "name": "", "type": "address" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "devWallet",
+		"outputs": [
+			{ "internalType": "address", "name": "", "type": "address" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "earnedToken",
+		"outputs": [
+			{ "internalType": "contract IERC20", "name": "", "type": "address" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "endBlock",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "exchangeRate",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "maxToSell",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{ "internalType": "address", "name": "", "type": "address" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "address", "name": "user_", "type": "address" }
+		],
+		"name": "pendingAmount",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "startBlock",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "address", "name": "newOwner", "type": "address" }
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "address", "name": "", "type": "address" }
+		],
+		"name": "userInfo",
+		"outputs": [
+			{ "internalType": "uint256", "name": "", "type": "uint256" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawToDevWallet",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
