@@ -70,6 +70,7 @@ contract Treasury is AccessControlEnumerable, ITreasury, ReentrancyGuard {
 
 	// protocol parameters
 	uint256 public bondDepletionFloorPercent;
+	uint256 public smartBondDepletionFloorPercent;
 	uint256 public maxDebtRatioPercent;
 	uint256 public devPercentage;
 	uint256 public bondRepayPercent;
@@ -124,6 +125,7 @@ contract Treasury is AccessControlEnumerable, ITreasury, ReentrancyGuard {
 	event NewMaxSupplyContraction(uint256 percent);
 	event NewMaxDebtRatio(uint256 percent);
 	event NewBondDepletionFloor(uint256 percent);
+	event NewSmartBondDepletionFloor(uint256 percent);
 	event NewDevPercentage(uint256 percent);
 	event NewDevAddress(address indexed devAddress);
 	event NewDollarOracle(address indexed oracle);
@@ -223,6 +225,7 @@ contract Treasury is AccessControlEnumerable, ITreasury, ReentrancyGuard {
 		expansionIndex = 1000;
 		contractionIndex = 10000;
 		bondDepletionFloorPercent = 10000;
+		smartBondDepletionFloorPercent = 9500;
 		bondRepayPercent = 1000;
 		triggerRebaseNumEpochFloor = 5;
 		maxSupplyContractionPercent = 300;
@@ -360,6 +363,20 @@ contract Treasury is AccessControlEnumerable, ITreasury, ReentrancyGuard {
 		); // [5%, 100%]
 		bondDepletionFloorPercent = _bondDepletionFloorPercent;
 		emit NewBondDepletionFloor(_bondDepletionFloorPercent);
+	}
+
+	/**
+	 * @notice It allows the admin to change the max amount of bonds from the total supply in smart bond pool that can
+	 *			be funded.
+	 * @dev This function is only callable by DEFAULT_ADMIN_ROLE
+	 * @param _smartBondDepletionFloorPercent The new bond depletion percent for the smart bond pool
+	 */
+	function setSmartBondDepletionFloorPercent(
+		uint256 _smartBondDepletionFloorPercent
+	) external onlyRole(DEFAULT_ADMIN_ROLE) {
+		require(_smartBondDepletionFloorPercent <= 99000, 'out of range'); // [0%, 99%]
+		smartBondDepletionFloorPercent = _smartBondDepletionFloorPercent;
+		emit NewSmartBondDepletionFloor(_smartBondDepletionFloorPercent);
 	}
 
 	/**
@@ -520,6 +537,8 @@ contract Treasury is AccessControlEnumerable, ITreasury, ReentrancyGuard {
 	 */
 	function migrate(address target) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		require(!migrated, 'Migrated');
+
+		require(target != address(0), 'New contract cannot be zero');
 
 		IERC20(dollar).safeTransfer(
 			target,
@@ -694,6 +713,8 @@ contract Treasury is AccessControlEnumerable, ITreasury, ReentrancyGuard {
 	 * @return The amount of dollar tokens saved for boardroom
 	 */
 	function _expandDollar(int256 supplyDelta) private returns (uint256) {
+		require(supplyDelta >= 0, 'Not allowed to convert to uint');
+
 		// Expansion (Price > 1.01$): there is some seigniorage to be allocated
 		supplyDelta = supplyDelta.mul(expansionIndex).div(10000);
 
@@ -723,15 +744,17 @@ contract Treasury is AccessControlEnumerable, ITreasury, ReentrancyGuard {
 		}
 
 		if (_savedForBond > 0) {
-			uint256 smartBondPoolBalance = IBalanceRebaser(smartBondPool)
-				.totalBalance();
+			uint256 maxAmountForSmartBondPool = IBalanceRebaser(smartBondPool)
+				.totalBalance()
+				.mul(smartBondDepletionFloorPercent)
+				.div(10000);
 			uint256 savedForSmartPool = _savedForBond
 				.mul(bondRepayToBondSmartPoolPercent)
 				.div(10000);
 
 			savedForSmartPool = Math.min(
 				savedForSmartPool,
-				smartBondPoolBalance
+				maxAmountForSmartBondPool
 			);
 			_savedForBond = _savedForBond.sub(savedForSmartPool);
 

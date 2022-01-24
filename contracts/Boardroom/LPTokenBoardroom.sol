@@ -20,7 +20,6 @@ contract LPTokenBoardroom is Boardroom {
 	event NewZapper(address indexed oldZapper, address indexed newZapper);
 	event NewCompoundEnabled(bool enabled);
 
-
 	constructor(
 		IERC20 _cash,
 		IERC20 _share,
@@ -51,12 +50,12 @@ contract LPTokenBoardroom is Boardroom {
 	}
 
 	function compound() external onlyOneBlock updateReward(msg.sender) {
-		require(compoundEnabled, "Compound is not enabled");
+		require(compoundEnabled, 'Compound is not enabled');
 
 		uint256 cashReward = directors[msg.sender].cashRewardEarned;
 		uint256 shareReward = directors[msg.sender].shareRewardEarned;
 
-		require(cashReward > 0 || shareReward > 0, "No rewards to compound");
+		require(cashReward > 0 || shareReward > 0, 'No rewards to compound');
 
 		directors[msg.sender].cashRewardEarned = 0;
 		directors[msg.sender].shareRewardEarned = 0;
@@ -81,12 +80,16 @@ contract LPTokenBoardroom is Boardroom {
 
 	function setZapper(IZapper _zapper) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		emit NewZapper(address(zapper), address(_zapper));
+		cash.safeApprove(address(zapper), 0);
 		zapper = _zapper;
 		_approveZapper();
 	}
 
-	function setCompoundEnabled(bool _enabled) external onlyRole(DEFAULT_ADMIN_ROLE) {
-		require(compoundEnabled != _enabled, "Enable value must be different");
+	function setCompoundEnabled(bool _enabled)
+		external
+		onlyRole(DEFAULT_ADMIN_ROLE)
+	{
+		require(compoundEnabled != _enabled, 'Enable value must be different');
 		emit NewCompoundEnabled(_enabled);
 		compoundEnabled = _enabled;
 	}

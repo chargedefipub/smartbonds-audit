@@ -13,18 +13,22 @@ import 'hardhat/console.sol';
 import '../Interfaces/IBasisAsset.sol';
 import './StrategyManager.sol';
 import './BalanceRebaser.sol';
+import '../ContractWhitelisted.sol';
 
 contract SmartBondPool is
 	BalanceRebaser,
 	StrategyManager,
 	Pausable,
 	ReentrancyGuard,
-	ISmartBondPool
+	ISmartBondPool,
+	ContractWhitelisted
 {
 	using SafeMath for uint256;
 	using SafeERC20 for IERC20;
 	using SafeERC20 for IERC20Metadata;
 	using SafeERC20 for IBasisAsset;
+
+	bytes32 public constant allocatorRole = keccak256('allocator');
 
 	// Accrued token per share (bond token)
 	uint256 public accTokenPerShare;
@@ -65,7 +69,12 @@ contract SmartBondPool is
 		PRECISION_FACTOR = uint256(10**(uint256(30).sub(decimalsRewardToken)));
 	}
 
-	function allocateSeigniorage(uint256 amount_) external override {
+	function allocateSeigniorage(uint256 amount_)
+		external
+		override
+		onlyRole(allocatorRole)
+		nonReentrant
+	{
 		require(amount_ > 0, "amount can't be zero");
 		require(totalBalance() > 0, 'No money deposited');
 		require(totalBalance() > amount_, 'Too many dollars for bonds');
@@ -96,7 +105,11 @@ contract SmartBondPool is
 	 * @notice Deposit bond tokens and collect dollar and reward tokens (if any)
 	 * @param _amount: amount to deposit (in bondToken)
 	 */
-	function deposit(uint256 _amount) external nonReentrant {
+	function deposit(uint256 _amount)
+		external
+		nonReentrant
+		isAllowedContract(msg.sender)
+	{
 		UserInfo storage user = userInfo[msg.sender];
 
 		_updatePool();
@@ -125,7 +138,11 @@ contract SmartBondPool is
 	 * @notice Withdraw bonds tokens and collect dollar and reward tokens
 	 * @param _amount: amount to withdraw (in bondToken)
 	 */
-	function withdraw(uint256 _amount) external nonReentrant {
+	function withdraw(uint256 _amount)
+		external
+		nonReentrant
+		isAllowedContract(msg.sender)
+	{
 		require(
 			balanceOf(msg.sender) >= _amount,
 			'Amount to withdraw too high'
@@ -153,7 +170,11 @@ contract SmartBondPool is
 	 * @notice Withdraw bond tokens without caring about rewards
 	 * @dev Needs to be for emergency.
 	 */
-	function emergencyWithdraw() external nonReentrant {
+	function emergencyWithdraw()
+		external
+		nonReentrant
+		isAllowedContract(msg.sender)
+	{
 		UserInfo storage user = userInfo[msg.sender];
 		uint256 userBondBalance = balanceOf(msg.sender);
 
