@@ -66,6 +66,8 @@ contract SmartBondPool is
 		uint256 decimalsRewardToken = uint256(_rewardToken.decimals());
 		require(decimalsRewardToken < 30, 'Must be inferior to 30');
 
+		_setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+
 		PRECISION_FACTOR = uint256(10**(uint256(30).sub(decimalsRewardToken)));
 	}
 
